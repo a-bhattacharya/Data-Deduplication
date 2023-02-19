@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>News Deduplication</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            background-image: url('./assets/background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 50px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .branding {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #d6d6d6;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.508);
+        }
+
+        .group-btn {
+            border: none;
+            padding: 10px 30px;
+            margin: 10px;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .group-btn:hover,
+        .group-btn.active {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333333;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .card-body {
+            padding: 20px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-3">
+        <h1>NEWS GROUPS</h1>
+        <p class="branding">IrisZero</p>
+        <hr>
+        <div id="groups" class="d-flex flex-wrap"></div>
+        <hr>
+        <div id="titles" class="d-flex flex-wrap"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        const groupsDiv = $('#groups');
+        const titlesDiv = $('#titles');
+
+        function showTitles(group_id) {
+            $('.group-btn').removeClass('active');
+            $(`#group${group_id}`).addClass('active');
+            fetch(`http://127.0.0.1:5000/api/news?group=${group_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    titlesDiv.html(data.titles.map(title => `<div class="card"><div class="card-body">${title}</div></div>`).join(''));
+                })
+                .catch(error => {
+                    console.error('Error retrieving news titles:', error);
+                    alert('Error retrieving news titles');
+                });
+        }
+
+        fetch('http://127.0.0.1:5000/api/news')
+            .then(response => response.json())
+            .then(data => {
+                groupsDiv.html(data.map(group => `<button class="btn btn-primary mb-2 mr-2 group-btn${group.id === 1 ? ' active' : ''}" id="group${group.id}" onclick="showTitles(${group.id})">Group ${group.id}</button>`).join(''));
+                showTitles(1);
+            })
+            .catch(error => {
+                console.error('Error retrieving news groups:', error);
+                alert('Error retrieving news groups');
+            });
+    </script>
+</body>
+
+</html>
