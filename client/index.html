@@ -16,7 +16,7 @@
             background-attachment: fixed;
         }
 
-        h1 {
+        h1.btn {
             font-size: 2.5rem;
             font-weight: 700;
             color: #ffffff;
@@ -85,19 +85,49 @@
 
         }
     </style>
+
 </head>
 
 <body>
     <div class="container mt-3">
-        <h1>NEWS GROUPS</h1>
+        <div style="text-align: center;">
+            <h1 class="btn btn-outline-info" data-toggle="modal" data-target="#myModal">NEWS GROUPS</h1>
+            <!-- Modal -->
+            <div class="modal" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Description</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>These are the news articles, classified and grouped by the algorithm. You can look up the
+                                original JSON
+                                file which contained all the news articles in a list by clicking on the 'VIEW RAW JSON'
+                                button.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal ends -->
+        </div>
         <p class="branding">IrisZero</p>
+        <div style="text-align: right;">
+            <button class="btn btn-outline-light btn-sm"
+                onclick="window.open('http://127.0.0.1:5000/api/news_raw','_blank');">VIEW
+                RAW JSON</button>
+        </div>
         <hr>
         <div id="groups" class="d-flex flex-wrap"></div>
         <hr>
         <div id="titles" class="d-flex flex-wrap"></div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
@@ -110,7 +140,13 @@
             fetch(`http://127.0.0.1:5000/api/news?group=${group_id}`)
                 .then(response => response.json())
                 .then(data => {
-                    titlesDiv.html(data.titles.map(title => `<div class="card"><div class="card-body">${title}</div></div>`).join(''));
+                    const cards = data.titles.map(title => $('<div class="card"><div class="card-body"></div></div>'));
+                    titlesDiv.html(cards);
+                    cards.forEach((card, index) => {
+                        const titleDiv = card.find('.card-body');
+                        titleDiv.text(data.titles[index]);
+                        card.hide().appendTo(titlesDiv).fadeIn(150 + index * 50);
+                    });
                 })
                 .catch(error => {
                     console.error('Error retrieving news titles:', error);
@@ -118,16 +154,18 @@
                 });
         }
 
+
         fetch('http://127.0.0.1:5000/api/news')
             .then(response => response.json())
             .then(data => {
-                groupsDiv.html(data.map(group => `<button class="btn btn-primary mb-2 mr-2 group-btn${group.id === 1 ? ' active' : ''}" id="group${group.id}" onclick="showTitles(${group.id})">Group ${group.id}</button>`).join(''));
+                groupsDiv.html(data.map(group => `<button class="btn btn-info mb-2 mr-2 group-btn${group.id === 1 ? ' active' : ''}" id="group${group.id}" onclick="showTitles(${group.id})">Group ${group.id}</button>`).join(''));
                 showTitles(1);
             })
             .catch(error => {
                 console.error('Error retrieving news groups:', error);
                 alert('Error retrieving news groups');
             });
+
     </script>
 </body>
 

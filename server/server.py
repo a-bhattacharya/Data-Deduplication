@@ -8,6 +8,14 @@ CORS(app)
 with open("./grouped_news.json") as f:
     data = json.load(f)
 
+with open("./newsdata.json") as f:
+    newsdata = list(json.load(f).values())
+
+
+@app.route("/api/news_raw")
+def gen_news_data():
+    return newsdata
+
 
 @app.route("/api/news")
 def get_news():
