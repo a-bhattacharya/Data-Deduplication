@@ -8,11 +8,17 @@ cssselect==1.2.0
 feedfinder2==0.0.4
 feedparser==6.0.10
 filelock==3.9.0
+Flask==2.2.3
+Flask-Cors==3.0.10
 huggingface-hub==0.12.1
 idna==3.4
+importlib-metadata==6.0.0
+itsdangerous==2.1.2
 jieba3k==0.35.1
+Jinja2==3.1.2
 joblib==1.2.0
 lxml==4.9.2
+MarkupSafe==2.1.2
 mypy-extensions==1.0.0
 newspaper3k==0.2.8
 nltk==3.8.1
@@ -46,3 +52,5 @@ tqdm==4.64.1
 transformers==4.26.1
 typing_extensions==4.5.0
 urllib3==1.26.14
+Werkzeug==2.2.3
+zipp==3.14.0
